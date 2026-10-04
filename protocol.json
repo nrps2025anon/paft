@@ -1,0 +1,206 @@
+{
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "backbones": {
+    "vit": "vit_small_patch16_224.augreg_in1k",
+    "r50": "resnet50.a1_in1k",
+    "r18": "resnet18.a1_in1k"
+  },
+  "datasets": [
+    "svhn",
+    "stl10",
+    "cifar100",
+    "tinyimagenet",
+    "cub200"
+  ],
+  "arms_ours": [
+    "kl_cka_nbr",
+    "kl_cka",
+    "kl_nbr",
+    "cka_nbr",
+    "kl",
+    "cka",
+    "nbr"
+  ],
+  "arms_rival": [
+    "trank",
+    "neck",
+    "rank",
+    "center"
+  ],
+  "doses": [
+    0.01,
+    0.05,
+    0.1,
+    0.25,
+    0.5,
+    1,
+    2,
+    5
+  ],
+  "d_both": [
+    16,
+    64
+  ],
+  "d_rule_ablation": {
+    "r18": 16,
+    "r50": 16,
+    "vit": 64
+  },
+  "regime": "pretrained",
+  "recipe": {
+    "optimizer": "adam",
+    "lr": 0.0001,
+    "batch": 256,
+    "max_epochs": 150,
+    "early_stopping": {
+      "enabled": true,
+      "monitor": "val_acc",
+      "mode": "max",
+      "patience": 10,
+      "restore_best": true
+    }
+  },
+  "val_split": {
+    "fraction": 0.1,
+    "stratified": true,
+    "seed": 0
+  },
+  "transforms": {
+    "train": "Resize(256)+RandomCrop(224)+Flip[except svhn]+ToTensor+Normalize(imagenet)",
+    "test": "Resize(256)+CenterCrop(224)+ToTensor+Normalize(imagenet)"
+  },
+  "determinism": {
+    "by_backbone": {
+      "r18": true,
+      "r50": true,
+      "vit": true
+    },
+    "torch_use_deterministic_algorithms": true,
+    "warn_only": false,
+    "cublas_workspace_config": ":4096:8"
+  },
+  "eval": {
+    "drs": [
+      "pca",
+      "tsne",
+      "umap",
+      "pacmap"
+    ],
+    "protocol": "val-fit",
+    "fit_on": "val (full split)",
+    "transform": "val and the full test split under the same fit; every point is stored",
+    "metric_n_val": "full",
+    "metric_n_test_cap": 10000,
+    "subsample_rule": "np.random.RandomState(0).permutation(N)[:n]; test split only, and only for svhn",
+    "tsne_impl": "openTSNE 1.0.4; the scikit-learn implementation has no transform"
+  },
+  "n_test": {
+    "svhn": 26032,
+    "stl10": 8000,
+    "cifar100": 10000,
+    "tinyimagenet": 10000,
+    "cub200": 5794
+  },
+  "n_val": {
+    "svhn": 7326,
+    "stl10": 500,
+    "cifar100": 5000,
+    "tinyimagenet": 10000,
+    "cub200": 600
+  },
+  "n_train": {
+    "svhn": 65931,
+    "stl10": 4500,
+    "cifar100": 45000,
+    "tinyimagenet": 90000,
+    "cub200": 5394
+  },
+  "n_classes": {
+    "svhn": 10,
+    "stl10": 10,
+    "cifar100": 100,
+    "tinyimagenet": 200,
+    "cub200": 200
+  },
+  "gate": {
+    "rule": "mat"
+  },
+  "arms_active": [
+    "kl_cka_nbr"
+  ],
+  "doses_active": [
+    0.01,
+    0.05,
+    0.1,
+    0.25,
+    0.5,
+    1
+  ],
+  "dose_waves": [
+    [
+      0.01,
+      0.05,
+      0.1,
+      0.25
+    ],
+    [
+      0.5,
+      1
+    ]
+  ],
+  "neck_dims": {
+    "vit": [
+      2,
+      16,
+      64,
+      128,
+      256
+    ],
+    "r50": [
+      2,
+      16,
+      64,
+      128,
+      256,
+      512,
+      1024
+    ],
+    "r18": [
+      2,
+      16,
+      64,
+      128,
+      256
+    ]
+  },
+  "neck_wave": 2,
+  "rank_doses": [
+    0.001,
+    0.005,
+    0.01,
+    0.025,
+    0.05,
+    0.1
+  ],
+  "rank_wave": 3,
+  "center_doses": [
+    0.0003,
+    0.001,
+    0.003,
+    0.01,
+    0.03,
+    0.1
+  ],
+  "center_wave": 4
+}
